@@ -12,27 +12,27 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # ratchet:actions/checkout@v3
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # ratchet:docker/setup-qemu-action@v2
 
       - name: Set the image metadata
         run: ./build/set_image_metadata
 
-      - name: Set the operator version from the tag 
+      - name: Set the operator version from the tag
         if: (github.event_name == 'release' && (github.event.action == 'published' || github.event.action == 'edited'))
         run: |-
           echo OPERATOR_VERSION=${{ github.event.release.tag_name }} >> "$GITHUB_ENV"
-      
-      - name: Set the operator version from the tag 
+
+      - name: Set the operator version from the tag
         if: github.event_name == 'push'
         run: |-
           echo OPERATOR_VERSION=${{ github.sha }} >> "$GITHUB_ENV"
 
       - name: Build an image
         id: build-image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # ratchet:redhat-actions/buildah-build@v2
         with:
           image: db-operator-dev
           tags: ${{ env.TAGS }}
@@ -45,7 +45,7 @@ jobs:
 
       - name: Push the image to GHCR
         id: push-to-ghcr
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # ratchet:redhat-actions/push-to-registry@v2
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
@@ -66,7 +66,7 @@ jobs:
 
       - name: Push the release image to GHCR
         if: (github.event_name == 'release' && (github.event.action == 'published' || github.event.action == 'edited'))
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # ratchet:redhat-actions/push-to-registry@v2
         with:
           tags: ghcr.io/${{ github.repository_owner }}/db-operator:latest ghcr.io/${{ github.repository_owner }}/db-operator:${{ github.event.release.tag_name }}
           username: ${{ github.actor }}
