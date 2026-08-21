@@ -160,14 +160,10 @@ spec:
                   Created is true after the operator has created the user or begun managing an existing user.
                 type: boolean
               database:
-                description: DatabaseName is the database name in the backend.
                 type: string
               operatorVersion:
-                description: |-
-                  OperatorVersion is the db-operator version that last completed reconciliation.
                 type: string
               status:
-                description: Status is true after the user reconciles successfully.
                 type: boolean
             required:
             - created

@@ -27,16 +27,18 @@ import (
 
 // DbInstanceSpec defines how db-operator connects to a database server.
 type DbInstanceSpec struct {
+	// Important: Run "make generate" to regenerate code after modifying this file
+
 	// Engine is the database engine. Supported values are postgres and mysql.
 	// This field is immutable.
 	Engine string `json:"engine"`
-	// AdminUserSecret references the Secret containing the database administrator credentials.
+	// AdminUserSecret references the database administrator Secret. The optional user key
+	// defaults to postgres for PostgreSQL and root for MySQL. PostgreSQL passwords are read
+	// from password, postgresql-password, or postgresql-postgres-password; MySQL passwords
+	// are read from password or mysql-root-password.
 	AdminUserSecret NamespacedName `json:"adminSecretRef"`
-	// Backup configures storage used by Database backup jobs.
-	Backup DbInstanceBackup `json:"backup,omitempty"`
-	// Monitoring configures database monitoring for this instance.
-	Monitoring DbInstanceMonitoring `json:"monitoring,omitempty"`
-	// SSLConnection configures TLS for connections from db-operator to the database server.
+	Backup        DbInstanceBackup        `json:"backup,omitempty"`
+	Monitoring    DbInstanceMonitoring    `json:"monitoring,omitempty"`
 	SSLConnection DbInstanceSSLConnection `json:"sslConnection,omitempty"`
 	// AllowedPrivileges lists database roles that DbUser resources may request in extraPrivileges.
 	// ALL PRIVILEGES is not allowed.
@@ -52,23 +54,20 @@ type DbInstanceSpec struct {
 
 // DbInstanceSource selects the database server provider. Exactly one source must be set.
 type DbInstanceSource struct {
-	// Google configures a Google Cloud SQL instance managed through the Google API.
-	//
-	// Deprecated: Use a generic instance. Google instances will be removed in v1beta2.
-	Google *GoogleInstance `json:"google,omitempty" protobuf:"bytes,1,opt,name=google"`
-	// Generic configures an existing database server by address and port.
+	Google  *GoogleInstance  `json:"google,omitempty" protobuf:"bytes,1,opt,name=google"`
 	Generic *GenericInstance `json:"generic,omitempty" protobuf:"bytes,2,opt,name=generic"`
 }
 
 // DbInstanceStatus reports the observed state of a DbInstance.
 type DbInstanceStatus struct {
-	// Phase is the current reconciliation phase.
+	// Important: Run "make generate" to regenerate code after modifying this file
+
+	// Phase is one of Validating, Creating, Broadcasting, ProxyCreating, or Running.
 	Phase string `json:"phase"`
 	// Status is true when the operator can connect to the database server.
 	Status bool `json:"status"`
-	// Info contains connection values discovered for the instance.
-	Info map[string]string `json:"info,omitempty"`
-	// Checksums records the last observed values of referenced Secrets and ConfigMaps.
+	// Info contains DB_CONN, DB_PORT, and DB_PUBLIC_IP values discovered for the instance.
+	Info      map[string]string `json:"info,omitempty"`
 	Checksums map[string]string `json:"checksums,omitempty"`
 }
 
@@ -76,7 +75,6 @@ type DbInstanceStatus struct {
 //
 // Deprecated: Use GenericInstance. Google instances will be removed in v1beta2.
 type GoogleInstance struct {
-	// InstanceName is the Google Cloud SQL instance name.
 	InstanceName string `json:"instance"`
 	// ConfigmapName references a ConfigMap containing the Google instance configuration.
 	ConfigmapName NamespacedName `json:"configmapRef"`
@@ -98,17 +96,14 @@ type BackendServer struct {
 type GenericInstance struct {
 	// Host is the address db-operator uses to connect to the database server.
 	// It cannot be set with hostFrom.
-	Host string `json:"host,omitempty"`
-	// HostFrom references a Secret or ConfigMap value containing the connection address.
+	Host     string   `json:"host,omitempty"`
 	HostFrom *FromRef `json:"hostFrom,omitempty"`
 	// Port is the database server port. It cannot be set with portFrom.
-	Port uint16 `json:"port,omitempty"`
-	// PortFrom references a Secret or ConfigMap value containing the database server port.
+	Port     uint16   `json:"port,omitempty"`
 	PortFrom *FromRef `json:"portFrom,omitempty"`
 	// PublicIP is the externally reachable address exposed in generated credentials.
 	// It cannot be set with publicIpFrom.
-	PublicIP string `json:"publicIp,omitempty"`
-	// PublicIPFrom references a Secret or ConfigMap value containing the externally reachable address.
+	PublicIP     string   `json:"publicIp,omitempty"`
 	PublicIPFrom *FromRef `json:"publicIpFrom,omitempty"`
 	// BackupHost is the address used by backup jobs. When empty, backup jobs use host.
 	BackupHost string `json:"backupHost,omitempty"`
@@ -117,10 +112,8 @@ type GenericInstance struct {
 // FromRef selects one value from a Secret or ConfigMap.
 type FromRef struct {
 	// Kind is the referenced resource kind. Supported values are Secret and ConfigMap.
-	Kind string `json:"kind"`
-	// Name is the referenced resource name.
-	Name string `json:"name"`
-	// Namespace is the referenced resource namespace.
+	Kind      string `json:"kind"`
+	Name      string `json:"name"`
 	Namespace string `json:"namespace"`
 	// Key is the data key whose value should be read.
 	Key string `json:"key"`
@@ -139,7 +132,6 @@ func (fr *FromRef) ToKubernetesType() k8stypes.NamespacedName {
 
 // DbInstanceBackup configures storage used by Database backup jobs.
 type DbInstanceBackup struct {
-	// Bucket is the destination bucket for database dumps.
 	Bucket string `json:"bucket"`
 }
 
@@ -151,7 +143,6 @@ type DbInstanceMonitoring struct {
 
 // DbInstanceSSLConnection configures TLS for connections from db-operator to the database server.
 type DbInstanceSSLConnection struct {
-	// Enabled uses TLS for database connections.
 	Enabled bool `json:"enabled"`
 	// SkipVerify accepts a server certificate without verifying its certificate authority or hostname.
 	SkipVerify bool `json:"skip-verify"`

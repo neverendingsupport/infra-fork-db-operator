@@ -454,14 +454,12 @@ spec:
                   ExtraGrants grants other existing database users access to this database.
                   The referenced DbInstance must set allowExtraGrants to true.
                 items:
-                  description: ExtraGrant grants an existing database user access to a Database.
                   properties:
                     accessType:
                       description: |-
                         AccessType is the access level to grant. Supported values are readOnly and readWrite.
                       type: string
                     user:
-                      description: User is the existing database user that receives the grant.
                       type: string
                   required:
                   - accessType
@@ -481,7 +479,6 @@ spec:
                       DropPublicSchema removes the public schema after the database is created.
                     type: boolean
                   extensions:
-                    description: Extensions lists PostgreSQL extensions to create in the database.
                     items:
                       type: string
                     type: array
@@ -519,23 +516,19 @@ spec:
             description: DatabaseStatus reports the observed state of a Database.
             properties:
               database:
-                description: DatabaseName is the database name in the backend.
                 type: string
               engine:
-                description: Engine is the database engine inherited from the referenced DbInstance.
                 type: string
               extraGrants:
                 description: |-
                   ExtraGrants records the grants applied during the last successful reconciliation.
                 items:
-                  description: ExtraGrant grants an existing database user access to a Database.
                   properties:
                     accessType:
                       description: |-
                         AccessType is the access level to grant. Supported values are readOnly and readWrite.
                       type: string
                     user:
-                      description: User is the existing database user that receives the grant.
                       type: string
                   required:
                   - accessType
@@ -543,8 +536,6 @@ spec:
                   type: object
                 type: array
               monitorUserSecret:
-                description: |-
-                  MonitorUserSecretName is the name of the Secret containing monitoring credentials.
                 type: string
               operatorVersion:
                 description: |-
@@ -555,11 +546,8 @@ spec:
                   DatabaseProxyStatus reports the connection proxy created for a Database.
                 properties:
                   serviceName:
-                    description: |-
-                      ServiceName is the name of the Kubernetes Service that exposes the proxy.
                     type: string
                   sqlPort:
-                    description: SQLPort is the Service port for database connections.
                     format: int32
                     type: integer
                   status:
@@ -574,7 +562,6 @@ spec:
                 description: Status is true after the database reconciles successfully.
                 type: boolean
               user:
-                description: UserName is the primary database user name.
                 type: string
             required:
             - database

@@ -21,12 +21,11 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-// NamespacedName identifies a Kubernetes resource by namespace and name.
+// NamespacedName mirrors Kubernetes' namespaced name type with the JSON tags required
+// for CRD generation.
 type NamespacedName struct {
-	// Namespace is the resource namespace.
 	Namespace string `json:"Namespace"`
-	// Name is the resource name.
-	Name string `json:"Name"`
+	Name      string `json:"Name"`
 }
 
 // ToKubernetesType converts our local type to the kubernetes API equivalent.
@@ -52,7 +51,6 @@ type Template struct {
 	Secret bool `json:"secret"`
 }
 
-// Templates is a list of generated credential entries.
 type Templates []*Template
 
 // CredentialsMetadata configures metadata on generated credential Secrets.

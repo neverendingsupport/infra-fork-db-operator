@@ -225,13 +225,14 @@ spec:
             properties:
               adminSecretRef:
                 description: |-
-                  AdminUserSecret references the Secret containing the database administrator credentials.
+                  AdminUserSecret references the database administrator Secret. The optional user key
+                  defaults to postgres for PostgreSQL and root for MySQL. PostgreSQL passwords are read
+                  from password, postgresql-password, or postgresql-postgres-password; MySQL passwords
+                  are read from password or mysql-root-password.
                 properties:
                   Name:
-                    description: Name is the resource name.
                     type: string
                   Namespace:
-                    description: Namespace is the resource namespace.
                     type: string
                 required:
                 - Name
@@ -253,7 +254,6 @@ spec:
                 description: DbInstanceBackup configures storage used by Database backup jobs.
                 properties:
                   bucket:
-                    description: Bucket is the destination bucket for database dumps.
                     type: string
                 required:
                 - bucket
@@ -287,10 +287,8 @@ spec:
                           Kind is the referenced resource kind. Supported values are Secret and ConfigMap.
                         type: string
                       name:
-                        description: Name is the referenced resource name.
                         type: string
                       namespace:
-                        description: Namespace is the referenced resource namespace.
                         type: string
                     required:
                     - key
@@ -312,10 +310,8 @@ spec:
                           Kind is the referenced resource kind. Supported values are Secret and ConfigMap.
                         type: string
                       name:
-                        description: Name is the referenced resource name.
                         type: string
                       namespace:
-                        description: Namespace is the referenced resource namespace.
                         type: string
                     required:
                     - key
@@ -339,10 +335,8 @@ spec:
                           Kind is the referenced resource kind. Supported values are Secret and ConfigMap.
                         type: string
                       name:
-                        description: Name is the referenced resource name.
                         type: string
                       namespace:
-                        description: Namespace is the referenced resource namespace.
                         type: string
                     required:
                     - key
@@ -365,10 +359,8 @@ spec:
                       ClientSecret references the Secret containing Google API client credentials.
                     properties:
                       Name:
-                        description: Name is the resource name.
                         type: string
                       Namespace:
-                        description: Namespace is the resource namespace.
                         type: string
                     required:
                     - Name
@@ -379,17 +371,14 @@ spec:
                       ConfigmapName references a ConfigMap containing the Google instance configuration.
                     properties:
                       Name:
-                        description: Name is the resource name.
                         type: string
                       Namespace:
-                        description: Namespace is the resource namespace.
                         type: string
                     required:
                     - Name
                     - Namespace
                     type: object
                   instance:
-                    description: InstanceName is the Google Cloud SQL instance name.
                     type: string
                 required:
                 - configmapRef
@@ -417,7 +406,6 @@ spec:
                   DbInstanceSSLConnection configures TLS for connections from db-operator to the database server.
                 properties:
                   enabled:
-                    description: Enabled uses TLS for database connections.
                     type: boolean
                   skip-verify:
                     description: |-
@@ -435,18 +423,18 @@ spec:
             description: DbInstanceStatus reports the observed state of a DbInstance.
             properties:
               checksums:
-                description: |-
-                  Checksums records the last observed values of referenced Secrets and ConfigMaps.
                 additionalProperties:
                   type: string
                 type: object
               info:
-                description: Info contains connection values discovered for the instance.
+                description: |-
+                  Info contains DB_CONN, DB_PORT, and DB_PUBLIC_IP values discovered for the instance.
                 additionalProperties:
                   type: string
                 type: object
               phase:
-                description: Phase is the current reconciliation phase.
+                description: |-
+                  Phase is one of Validating, Creating, Broadcasting, ProxyCreating, or Running.
                 type: string
               status:
                 description: Status is true when the operator can connect to the database server.

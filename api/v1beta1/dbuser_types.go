@@ -35,9 +35,8 @@ type DbUserSpec struct {
 	// ExtraPrivileges lists additional database roles to grant to the user.
 	// Every role must also appear in the referenced DbInstance's allowedPrivileges list.
 	// ALL PRIVILEGES is not allowed. This feature is experimental.
-	ExtraPrivileges []string `json:"extraPrivileges,omitempty"`
-	// Credentials configures generated credential data and Secret metadata.
-	Credentials Credentials `json:"credentials,omitempty"`
+	ExtraPrivileges []string    `json:"extraPrivileges,omitempty"`
+	Credentials     Credentials `json:"credentials,omitempty"`
 	// Cleanup adds this DbUser as an owner of the Kubernetes resources it creates.
 	// Kubernetes garbage collection then removes those resources with the DbUser.
 	Cleanup bool `json:"cleanup,omitempty"`
@@ -58,13 +57,10 @@ type DbUserSpec struct {
 
 // DbUserStatus reports the observed state of a DbUser.
 type DbUserStatus struct {
-	// Status is true after the user reconciles successfully.
-	Status bool `json:"status"`
-	// DatabaseName is the database name in the backend.
+	Status       bool   `json:"status"`
 	DatabaseName string `json:"database"`
 	// Created is true after the operator has created the user or begun managing an existing user.
-	Created bool `json:"created"`
-	// OperatorVersion is the db-operator version that last completed reconciliation.
+	Created         bool   `json:"created"`
 	OperatorVersion string `json:"operatorVersion,omitempty"`
 }
 

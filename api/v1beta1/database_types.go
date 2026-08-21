@@ -35,19 +35,16 @@ type DatabaseSpec struct {
 	// DeletionProtected keeps the database and its primary user in the database backend
 	// when the Database resource is deleted.
 	DeletionProtected bool `json:"deletionProtected"`
-	// Backup configures scheduled database dumps.
 	Backup DatabaseBackup `json:"backup,omitempty"`
 	// SecretsTemplates maps Secret data keys to legacy credential templates.
 	// It cannot be used with credentials.templates.
 	//
 	// Deprecated: Use credentials.templates instead.
 	SecretsTemplates map[string]string `json:"secretsTemplates,omitempty"`
-	// Postgres configures behavior that applies only to PostgreSQL databases.
-	Postgres Postgres `json:"postgres,omitempty"`
+	Postgres         Postgres          `json:"postgres,omitempty"`
 	// Cleanup adds this Database as an owner of the Kubernetes resources it creates.
 	// Kubernetes garbage collection then removes those resources with the Database.
-	Cleanup bool `json:"cleanup,omitempty"`
-	// Credentials configures generated credential data and Secret metadata.
+	Cleanup     bool        `json:"cleanup,omitempty"`
 	Credentials Credentials `json:"credentials,omitempty"`
 	// ExtraGrants grants other existing database users access to this database.
 	// The referenced DbInstance must set allowExtraGrants to true.
@@ -57,9 +54,7 @@ type DatabaseSpec struct {
 	ExistingUser string `json:"existingUser,omitempty"`
 }
 
-// ExtraGrant grants an existing database user access to a Database.
 type ExtraGrant struct {
-	// User is the existing database user that receives the grant.
 	User string `json:"user"`
 	// AccessType is the access level to grant. Supported values are readOnly and readWrite.
 	AccessType string `json:"accessType"`
@@ -67,7 +62,6 @@ type ExtraGrant struct {
 
 // Postgres configures behavior that applies only to PostgreSQL databases.
 type Postgres struct {
-	// Extensions lists PostgreSQL extensions to create in the database.
 	Extensions []string `json:"extensions,omitempty"`
 	// DropPublicSchema removes the public schema after the database is created.
 	DropPublicSchema bool `json:"dropPublicSchema,omitempty"`
@@ -80,18 +74,16 @@ type Postgres struct {
 
 // DatabaseStatus reports the observed state of a Database.
 type DatabaseStatus struct {
+	// Important: Run "make generate" to regenerate code after modifying this file
+	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+
 	// Status is true after the database reconciles successfully.
-	Status bool `json:"status"`
-	// MonitorUserSecretName is the name of the Secret containing monitoring credentials.
-	MonitorUserSecretName string `json:"monitorUserSecret,omitempty"`
-	// ProxyStatus reports the connection proxy created for the database.
-	ProxyStatus DatabaseProxyStatus `json:"proxyStatus,omitempty"`
-	// DatabaseName is the database name in the backend.
-	DatabaseName string `json:"database"`
-	// UserName is the primary database user name.
-	UserName string `json:"user"`
-	// Engine is the database engine inherited from the referenced DbInstance.
-	Engine string `json:"engine"`
+	Status                bool                `json:"status"`
+	MonitorUserSecretName string              `json:"monitorUserSecret,omitempty"`
+	ProxyStatus           DatabaseProxyStatus `json:"proxyStatus,omitempty"`
+	DatabaseName          string              `json:"database"`
+	UserName              string              `json:"user"`
+	Engine                string              `json:"engine"`
 	// OperatorVersion is the db-operator version that last completed reconciliation.
 	OperatorVersion string `json:"operatorVersion,omitempty"`
 	// ExtraGrants records the grants applied during the last successful reconciliation.
@@ -101,11 +93,9 @@ type DatabaseStatus struct {
 // DatabaseProxyStatus reports the connection proxy created for a Database.
 type DatabaseProxyStatus struct {
 	// Status is true when the proxy is ready.
-	Status bool `json:"status"`
-	// ServiceName is the name of the Kubernetes Service that exposes the proxy.
+	Status      bool   `json:"status"`
 	ServiceName string `json:"serviceName"`
-	// SQLPort is the Service port for database connections.
-	SQLPort int32 `json:"sqlPort"`
+	SQLPort     int32  `json:"sqlPort"`
 }
 
 // DatabaseBackup configures scheduled database dumps.
