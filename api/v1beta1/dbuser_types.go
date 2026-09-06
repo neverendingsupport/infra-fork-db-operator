@@ -59,6 +59,7 @@ type DbUserSpec struct {
 type DbUserStatus struct {
 	Status       bool   `json:"status"`
 	DatabaseName string `json:"database"`
+	UserName     string `json:"user,omitempty"`
 	// Created is true after the operator has created the user or begun managing an existing user.
 	Created         bool   `json:"created"`
 	OperatorVersion string `json:"operatorVersion,omitempty"`
