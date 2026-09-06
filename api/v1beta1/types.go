@@ -21,8 +21,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-// NamespacedName is a fork of the kubernetes api type of the same name.
-// Sadly this is required because CRD structs must have all fields json tagged and the kubernetes type is not tagged.
+// NamespacedName mirrors Kubernetes' namespaced name type with the JSON tags required
+// for CRD generation.
 type NamespacedName struct {
 	Namespace string `json:"Namespace"`
 	Name      string `json:"Name"`
@@ -40,43 +40,36 @@ func (nn *NamespacedName) ToKubernetesType() types.NamespacedName {
 	}
 }
 
-// Templates to add custom entries to ConfigMaps and Secrets
+// Template defines one generated credential entry.
 type Template struct {
-	Name     string `json:"name"`
+	// Name is the data key written to the generated Secret or ConfigMap.
+	Name string `json:"name"`
+	// Template is a Go template evaluated with database connection values and template helper functions.
 	Template string `json:"template"`
-	Secret   bool   `json:"secret"`
+	// Secret writes the entry to a Secret when true and to a ConfigMap when false.
+	// DbUser templates must set this field to true.
+	Secret bool `json:"secret"`
 }
 
 type Templates []*Template
 
-// CredentialsMetadata contains additional metadata that should be applied
-// to Kubernetes objects created from credentials configuration.
-//
-// At the moment, this is used for Secret resources created for Database
-// and DbUser credentials.
+// CredentialsMetadata configures metadata on generated credential Secrets.
 type CredentialsMetadata struct {
-	// ExtraLabels will be merged into the labels of the Secret created
-	// for the credentials. Existing labels are preserved, and keys from
-	// this map will overwrite labels with the same key on the Secret.
+	// ExtraLabels is merged into the generated Secret's labels.
+	// Values in this map replace existing values for the same keys.
 	ExtraLabels map[string]string `json:"extraLabels,omitempty"`
 
-	// ExtraAnnotations will be merged into the annotations of the Secret
-	// created for the credentials. Existing annotations are preserved, and
-	// keys from this map will overwrite annotations with the same key on
-	// the Secret.
+	// ExtraAnnotations is merged into the generated Secret's annotations.
+	// Values in this map replace existing values for the same keys.
 	ExtraAnnotations map[string]string `json:"extraAnnotations,omitempty"`
 }
 
-// Credentials should be used to setup everything relates to k8s secrets and configmaps
+// Credentials configures generated credential data and Secret metadata.
 // TODO(@allanger): Field .spec.secretName should be moved here in the v1beta2 version
 type Credentials struct {
-	// Templates to add custom entries to ConfigMaps and Secrets
+	// Templates defines additional data entries for generated Secrets and ConfigMaps.
 	Templates Templates `json:"templates,omitempty"`
 
-	// Metadata defines additional metadata that should be applied to
-	// k8s resources created from credentials configuration.
-	//
-	// For Database and DbUser, this metadata is applied to the Secret
-	// that stores generated credentials.
+	// Metadata configures labels and annotations on the generated credential Secret.
 	Metadata *CredentialsMetadata `json:"metadata,omitempty"`
 }
